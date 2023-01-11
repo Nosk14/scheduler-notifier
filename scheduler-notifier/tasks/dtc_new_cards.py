@@ -17,15 +17,17 @@ def run_job():
     parser.feed(html)
     top_cards = {c['name'] for c in parser.cards[0:4]}
 
-    has_new_cards = True
-    for card in EXPECTED_CARDS:
-        if card in top_cards:
-            has_new_cards = False
+    if top_cards:
+        has_new_cards = True
+        for card in EXPECTED_CARDS:
+            if card in top_cards:
+                has_new_cards = False
 
-    if has_new_cards:
-        telegram.notify("Ja ha sortit lo nou de DTC!\nhttps://www.drivethrucards.com/browse/pub/12056/Black-Chantry-Productions/subcategory/30619_34256/VTES-Legacy-Card-Singles?sort=4a")
-        logging.info(f"[{JOB_NAME}] New cards found!")
-        return CancelJob
+        if has_new_cards:
+            card_list = '\n'.join(top_cards)
+            telegram.notify(f"Ja ha sortit lo nou de DTC!\n{card_list}\n{DTC_URL}")
+            logging.info(f"[{JOB_NAME}] New cards found!")
+            return CancelJob
 
     logging.info(f"[{JOB_NAME}] Nothing new...")
 
